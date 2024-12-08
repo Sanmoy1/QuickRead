@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../models/article.dart';
 import '../providers/news_provider.dart';
+import '../providers/tts_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ArticleDetailsScreen extends StatelessWidget {
   final Article article;
 
   const ArticleDetailsScreen({super.key, required this.article});
+
+  String _getReadableText() {
+    return '${article.title}. ${article.description}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +20,24 @@ class ArticleDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Article Details'),
         actions: [
+          Consumer<TtsProvider>(
+            builder: (context, ttsProvider, child) {
+              return IconButton(
+                icon: Icon(
+                  ttsProvider.isPlaying ? Icons.stop_circle : Icons.play_circle,
+                  size: 28,
+                ),
+                onPressed: () {
+                  if (ttsProvider.isPlaying) {
+                    ttsProvider.stop();
+                  } else {
+                    ttsProvider.speak(_getReadableText());
+                  }
+                },
+                tooltip: ttsProvider.isPlaying ? 'Stop Reading' : 'Read Article',
+              );
+            },
+          ),
           IconButton(
             icon: Icon(
               article.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
@@ -63,62 +86,56 @@ class ArticleDetailsScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      if (article.url.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Article URL is not available'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      try {
-                        final Uri url = Uri.parse(article.url);
-                        if (!url.hasScheme) {
-                          // Add https if scheme is missing
-                          final urlString = 'https://${article.url}';
-                          final httpsUrl = Uri.parse(urlString);
-                          if (await canLaunchUrl(httpsUrl)) {
-                            await launchUrl(
-                              httpsUrl,
-                              mode: LaunchMode.externalApplication,
-                              webViewConfiguration: const WebViewConfiguration(
-                                enableJavaScript: true,
-                                enableDomStorage: true,
-                              ),
-                            );
-                          } else {
-                            throw 'Could not launch $urlString';
-                          }
-                        } else {
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(
-                              url,
-                              mode: LaunchMode.externalApplication,
-                              webViewConfiguration: const WebViewConfiguration(
-                                enableJavaScript: true,
-                                enableDomStorage: true,
-                              ),
-                            );
-                          } else {
-                            throw 'Could not launch ${url.toString()}';
-                          }
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Could not open the article: ${e.toString()}'),
-                              duration: const Duration(seconds: 3),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            final Uri url = Uri.parse(article.url);
+                            try {
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                              } else {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Could not open the article'),
+                                    ),
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error opening article: $e'),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.launch),
+                          label: const Text('Read Full Article'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Consumer<TtsProvider>(
+                        builder: (context, ttsProvider, child) {
+                          return FloatingActionButton(
+                            onPressed: () {
+                              if (ttsProvider.isPlaying) {
+                                ttsProvider.stop();
+                              } else {
+                                ttsProvider.speak(_getReadableText());
+                              }
+                            },
+                            child: Icon(
+                              ttsProvider.isPlaying ? Icons.stop : Icons.play_arrow,
                             ),
                           );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.launch),
-                    label: const Text('Read Full Article'),
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
