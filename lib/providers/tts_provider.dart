@@ -23,7 +23,8 @@ class TtsProvider with ChangeNotifier {
     await _flutterTts.setLanguage('en-US');
     await _flutterTts.setSpeechRate(0.5);
     await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(3.0);
+    await _flutterTts.setPitch(0.0);
+    await _flutterTts.setVoice({'name': 'en-us-x-iol-local', 'locale': 'en-US'});
 
     _flutterTts.setCompletionHandler(() {
       stop();
