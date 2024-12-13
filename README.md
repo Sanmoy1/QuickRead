@@ -15,22 +15,28 @@ News Reader is a modern, feature-rich mobile application built with Flutter that
 - Smooth theme switching
 - Persistent theme preference
 
-### 3. Search Functionality
+### 3. Advanced Search Filters
+- Date range filtering for news articles
+- Source and category selection options
+- Sorting by published date, relevancy, or popularity
+- User-friendly interface for applying filters
+
+### 4. Search Functionality
 - Real-time news search
 - Search history management
 - Easy access to recent searches
 
-### 4. Text-to-Speech
+### 5. Text-to-Speech
 - Article content reading feature
 - Play/Pause/Stop speech controls
 - Clear US English pronunciation
 
-### 5. Bookmarking
+### 6. Bookmarking
 - Save favorite articles
 - Dedicated bookmarks screen
 - Easy bookmark management
 
-### 6. Article Interaction
+### 7. Article Interaction
 - Full article URL launching
 - Detailed article view
 - Share and read full articles
