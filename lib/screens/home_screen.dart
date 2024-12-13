@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/news_provider.dart';
@@ -6,6 +8,7 @@ import '../providers/search_history_provider.dart';
 import '../models/article.dart';
 import '../widgets/search_history_list.dart';
 import 'article_details_screen.dart';
+import '../widgets/search_filters_bottom_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,23 +18,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _searchController = TextEditingController();
-  bool _isInitialized = false;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounceTimer;
   bool _showSearchHistory = false;
   final FocusNode _searchFocusNode = FocusNode();
-  
+
   @override
   void initState() {
     super.initState();
+    _loadInitialNews();
+    _setupSearchFocusListener();
     _searchFocusNode.addListener(_onSearchFocusChange);
   }
 
-  @override
-  void dispose() {
-    _searchFocusNode.removeListener(_onSearchFocusChange);
-    _searchFocusNode.dispose();
-    _searchController.dispose();
-    super.dispose();
+  void _loadInitialNews() {
+    final newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    newsProvider.fetchNews();
+  }
+
+  void _setupSearchFocusListener() {
+    _searchFocusNode.addListener(() {
+      setState(() {
+        _showSearchHistory = _searchFocusNode.hasFocus && 
+            _searchController.text.isEmpty;
+      });
+    });
   }
 
   void _onSearchFocusChange() {
@@ -40,24 +51,58 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _onSearchChanged(String query) {
+    final newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (query.isEmpty) {
+        newsProvider.fetchNews();
+      } else {
+        newsProvider.fetchNews(query: query);
+      }
+    });
+  }
+
   void _performSearch(String query) {
     if (query.trim().isNotEmpty) {
       Provider.of<SearchHistoryProvider>(context, listen: false).addSearch(query);
-      Provider.of<NewsProvider>(context, listen: false).searchNews(query);
+      Provider.of<NewsProvider>(context, listen: false).fetchNews(query: query);
       _searchFocusNode.unfocus();
       setState(() {
         _showSearchHistory = false;
       });
     }
   }
-  
+
+  void _showFilters() {
+    final newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SearchFiltersBottomSheet(
+          initialFilters: newsProvider.currentFilters,
+          onApply: (filters) {
+            newsProvider.fetchNews(
+              query: _searchController.text,
+              filters: filters,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isInitialized) {
-      Provider.of<NewsProvider>(context, listen: false).loadTopHeadlines();
-      _isInitialized = true;
-    }
+  void dispose() {
+    _searchFocusNode.removeListener(_onSearchFocusChange);
+    _searchFocusNode.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,6 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('News Reader'),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: _showFilters,
+              tooltip: 'Search Filters',
+            ),
             Consumer<ThemeProvider>(
               builder: (context, themeProvider, child) {
                 return IconButton(
@@ -97,19 +147,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 focusNode: _searchFocusNode,
                 decoration: InputDecoration(
                   hintText: 'Search news...',
-                  filled: true,
-                  fillColor: Theme.of(context).colorScheme.surface,
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            Provider.of<NewsProvider>(context, listen: false)
+                                .fetchNews();
+                          },
+                        )
+                      : null,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      _performSearch(_searchController.text);
-                    },
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
+                onChanged: _onSearchChanged,
                 onSubmitted: _performSearch,
               ),
             ),

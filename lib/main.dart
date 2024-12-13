@@ -27,9 +27,11 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(
+           
             title: 'News Reader',
             theme: themeProvider.themeData,
             home: const MainScreen(),
+            debugShowCheckedModeBanner: false,
           );
         },
       ),
