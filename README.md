@@ -96,8 +96,8 @@ This architecture enables reactive programming, allowing the UI to automatically
 ### Installation Steps
 1. Clone the repository
 ```bash
-git clone https://github.com/Sanmoy1/news_reader_app.git
-cd news_reader_app
+git clone https://github.com/Sanmoy1/QuickRead.git
+cd QuickRead
 ```
 
 2. Install dependencies
