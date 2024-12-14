@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('News Reader'),
+          title: const Text('QuickRead'),
           actions: [
             IconButton(
               icon: const Icon(Icons.filter_list),
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'No articles found',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         );
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   if (_showSearchHistory)
                     Container(
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).colorScheme.surface,
                       child: SearchHistoryList(
                         onSearchSelected: (query) {
                           _searchController.text = query;

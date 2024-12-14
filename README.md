@@ -1,7 +1,7 @@
-# 📰 News Reader App
+# 📰 QuickRead
 
 ## Overview
-News Reader is a modern, feature-rich mobile application built with Flutter that provides users with the latest news articles from around the world. The app offers a seamless and interactive news reading experience with multiple advanced features.
+QuickRead is a modern, feature-rich mobile application built with Flutter that provides users with the latest news articles from around the world. The app offers a seamless and interactive news reading experience with multiple advanced features.
 
 ## 🌟 Key Features
 
@@ -40,6 +40,35 @@ News Reader is a modern, feature-rich mobile application built with Flutter that
 - Full article URL launching
 - Detailed article view
 - Share and read full articles
+
+## 📸 Screenshots
+
+Here are some screenshots of the app in action:
+
+### Home Screen
+![Home Screen](screenshots/image1.png)
+
+### Bookmarks Screen
+![Bookmarks Screen](screenshots/image2.png)
+
+### Article Details
+![Article Details](screenshots/image3.png)
+
+### Search Filter
+![Search Filter](screenshots/image4.png)
+
+### Search Functionality
+![Search Functionality](screenshots/image5.png)
+
+## 🏗 Architecture
+
+The application follows the **MVVM (Model-View-ViewModel)** architecture pattern, enhanced by the **Provider** package for state management. This structure promotes a clear separation of concerns:
+
+- **Model**: Represents data structures and business logic (e.g., `Article`, `SearchFilters`, `NewsService`).
+- **View**: Comprises UI components that display data and interact with users (e.g., `HomeScreen`, `ArticleDetailsScreen`).
+- **ViewModel**: Managed by the `Provider`, it holds the app's state and business logic, notifying the View of any changes (e.g., `NewsProvider`, `SearchHistoryProvider`).
+
+This architecture enables reactive programming, allowing the UI to automatically update in response to state changes, making the app scalable and maintainable.
 
 ## 🛠 Technologies Used
 - Flutter

@@ -6,7 +6,7 @@ import '../services/news_service.dart';
 class NewsProvider with ChangeNotifier {
   final NewsService _newsService = NewsService();
   List<Article> _articles = [];
-  List<Article> _bookmarkedArticles = [];
+  final List<Article> _bookmarkedArticles = [];
   bool _isLoading = false;
   String _error = '';
   SearchFilters _currentFilters = SearchFilters.defaults;

@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp(
            
-            title: 'News Reader',
+            title: 'QuickRead',
             theme: themeProvider.themeData,
             home: const MainScreen(),
             debugShowCheckedModeBanner: false,
