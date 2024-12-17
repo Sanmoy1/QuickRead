@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../providers/news_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/search_history_provider.dart';
+import '../providers/auth_provider.dart';
 import '../models/article.dart';
 import '../widgets/search_history_list.dart';
 import 'article_details_screen.dart';
@@ -22,14 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _debounceTimer;
   bool _showSearchHistory = false;
   final FocusNode _searchFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadInitialNews();
-    _setupSearchFocusListener();
-    _searchFocusNode.addListener(_onSearchFocusChange);
-  }
 
   void _loadInitialNews() {
     final newsProvider = Provider.of<NewsProvider>(context, listen: false);
@@ -98,6 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadInitialNews();
+    _setupSearchFocusListener();
+    _searchFocusNode.addListener(_onSearchFocusChange);
+  }
+
+  @override
   void dispose() {
     _searchFocusNode.removeListener(_onSearchFocusChange);
     _searchFocusNode.dispose();
@@ -134,6 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   tooltip: themeProvider.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
                 );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                await Provider.of<AuthProvider>(context, listen: false).signOut();
+                if (mounted) {
+                  Navigator.pushReplacementNamed(context, '/login');
+                }
               },
             ),
           ],
