@@ -140,9 +140,23 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () async {
-                await Provider.of<AuthProvider>(context, listen: false).signOut();
-                if (mounted) {
-                  Navigator.pushReplacementNamed(context, '/login');
+                try {
+                  await Provider.of<AuthProvider>(context, listen: false).signOut();
+                  if (mounted) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login',
+                      (route) => false,
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to log out: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 }
               },
             ),

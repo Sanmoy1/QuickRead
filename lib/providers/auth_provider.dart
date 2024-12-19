@@ -1,16 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
-  bool _isLoading = false;
   String _error = '';
-
-  User? get user => _user;
-  bool get isLoading => _isLoading;
-  String get error => _error;
-  bool get isAuthenticated => _user != null;
+  bool _isLoading = false;
 
   AuthProvider() {
     _auth.authStateChanges().listen((User? user) {
@@ -19,23 +14,28 @@ class AuthProvider with ChangeNotifier {
     });
   }
 
+  bool get isAuthenticated => _user != null;
+  String get error => _error;
+  bool get isLoading => _isLoading;
+  User? get user => _user;
+
   Future<bool> signIn(String email, String password) async {
     try {
       _isLoading = true;
       _error = '';
       notifyListeners();
 
-      await _auth.signInWithEmailAndPassword(
+      final UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
+      _user = result.user;
       _isLoading = false;
       notifyListeners();
       return true;
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
       _isLoading = false;
-      _error = _getMessageFromErrorCode(e.code);
+      _error = _getReadableError(e);
       notifyListeners();
       return false;
     }
@@ -47,46 +47,61 @@ class AuthProvider with ChangeNotifier {
       _error = '';
       notifyListeners();
 
-      await _auth.createUserWithEmailAndPassword(
+      final UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-
+      _user = result.user;
       _isLoading = false;
       notifyListeners();
       return true;
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
       _isLoading = false;
-      _error = _getMessageFromErrorCode(e.code);
+      _error = _getReadableError(e);
       notifyListeners();
       return false;
     }
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    try {
+      _isLoading = true;
+      _error = '';
+      notifyListeners();
+
+      await _auth.signOut();
+      _user = null;
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      _error = _getReadableError(e);
+      notifyListeners();
+      rethrow;
+    }
   }
 
-  String _getMessageFromErrorCode(String errorCode) {
-    switch (errorCode) {
-      case "email-already-in-use":
-        return "Email already used. Go to login page.";
-      case "invalid-email":
-        return "Invalid email address.";
-      case "weak-password":
-        return "Password is too weak.";
-      case "user-not-found":
-        return "No user found with this email.";
-      case "wrong-password":
-        return "Wrong password provided.";
-      case "user-disabled":
-        return "User account has been disabled.";
-      case "too-many-requests":
-        return "Too many requests. Try again later.";
-      case "operation-not-allowed":
-        return "Email & Password accounts are not enabled.";
-      default:
-        return "An undefined error occurred.";
+  String _getReadableError(dynamic error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-not-found':
+          return 'No user found with this email';
+        case 'wrong-password':
+          return 'Wrong password provided';
+        case 'email-already-in-use':
+          return 'Email is already registered';
+        case 'invalid-email':
+          return 'Invalid email address';
+        case 'weak-password':
+          return 'Password is too weak';
+        case 'operation-not-allowed':
+          return 'Operation not allowed';
+        case 'user-disabled':
+          return 'User has been disabled';
+        default:
+          return 'Authentication error: ${error.message}';
+      }
     }
+    return 'An error occurred: $error';
   }
 }

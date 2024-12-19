@@ -24,11 +24,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      final success = await Provider.of<AuthProvider>(context, listen: false)
-          .signIn(_emailController.text, _passwordController.text);
-      
-      if (success && mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
+      try {
+        final success = await Provider.of<AuthProvider>(context, listen: false)
+            .signIn(_emailController.text, _passwordController.text);
+        
+        if (success && mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/',
+            (route) => false,
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Login failed: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
