@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "634244315295",
+    "project_id": "quickread-a8e5e",
+    "storage_bucket": "quickread-a8e5e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634244315295:android:25c7da40ba45ed8bb50aaa",
+        "android_client_info": {
+          "package_name": "com.example.news_reader_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAfQk6raOs_tD5SW7kX_mYyXZV-VP0QP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

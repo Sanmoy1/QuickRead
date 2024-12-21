@@ -6,10 +6,40 @@ class ThemeProvider with ChangeNotifier {
   late SharedPreferences _prefs;
   bool _isDarkMode = false;
 
-  bool get isDarkMode => _isDarkMode;
-
   ThemeProvider() {
     _loadThemeMode();
+  }
+
+  bool get isDarkMode => _isDarkMode;
+
+  ThemeData get themeData {
+    return ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.blue,
+        brightness: _isDarkMode ? Brightness.dark : Brightness.light,
+      ),
+      useMaterial3: true,
+      cardTheme: CardTheme(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+      ),
+    );
   }
 
   Future<void> _loadThemeMode() async {
@@ -23,46 +53,4 @@ class ThemeProvider with ChangeNotifier {
     await _prefs.setBool(_themeKey, _isDarkMode);
     notifyListeners();
   }
-
-  ThemeData get themeData {
-    return _isDarkMode ? _darkTheme : _lightTheme;
-  }
-
-  static final ThemeData _lightTheme = ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.light,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blue,
-      brightness: Brightness.light,
-    ),
-    appBarTheme: const AppBarTheme(
-      elevation: 0,
-      centerTitle: true,
-    ),
-    cardTheme: CardTheme(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
-
-  static final ThemeData _darkTheme = ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.dark,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blue,
-      brightness: Brightness.dark,
-    ),
-    appBarTheme: const AppBarTheme(
-      elevation: 0,
-      centerTitle: true,
-    ),
-    cardTheme: CardTheme(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
 }
