@@ -60,6 +60,12 @@ Here are some screenshots of the app in action:
 ### Search Functionality
 ![Search Functionality](screenshots/image5.png)
 
+### Login Screen
+![Login Screen](screenshots/login.png)
+
+### Register Screen
+![Register Screen](screenshots/register.png)
+
 ## 🏗 Architecture
 
 The application follows the **MVVM (Model-View-ViewModel)** architecture pattern, enhanced by the **Provider** package for state management. This structure promotes a clear separation of concerns:
