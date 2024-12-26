@@ -41,6 +41,12 @@ QuickRead is a modern, feature-rich mobile application built with Flutter that p
 - Detailed article view
 - Share and read full articles
 
+## Firebase Authentication
+The app uses Firebase Authentication to manage user accounts. Users can sign up and log in using their email and password. The authentication flow includes:
+- **Sign Up**: New users can create an account by providing an email and password.
+- **Login**: Existing users can log in to their accounts.
+- **Logout**: Users can log out, which clears their authentication state.
+
 ## 📸 Screenshots
 
 Here are some screenshots of the app in action:
