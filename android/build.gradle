@@ -1,8 +1,19 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.0' // Adjust version if needed
+        // classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20' // Add Kotlin plugin if used
+    }
+}
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
+    
 }
 
 rootProject.buildDir = "../build"

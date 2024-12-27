@@ -47,13 +47,6 @@ The app uses Firebase Authentication to manage user accounts. Users can sign up 
 - **Login**: Existing users can log in to their accounts.
 - **Logout**: Users can log out, which clears their authentication state.
 
-### Setup Instructions
-1. **Firebase Configuration**: Ensure you have configured your Firebase project and added the necessary configurations in your Flutter app.
-2. **Dependencies**: The following dependencies are required for Firebase authentication:
-   - `firebase_auth`: ^5.3.4
-   - `firebase_core`: ^3.8.1
-3. **Authentication Flow**: The authentication flow is managed through the `AuthProvider` class, which handles sign-in, sign-up, and sign-out operations.
-
 ## 📸 Screenshots
 
 Here are some screenshots of the app in action:
@@ -73,6 +66,12 @@ Here are some screenshots of the app in action:
 ### Search Functionality
 ![Search Functionality](screenshots/image5.png)
 
+### Login Screen
+![Login Screen](screenshots/login.png)
+
+### Register Screen
+![Register Screen](screenshots/register.png)
+
 ## 🏗 Architecture
 
 The application follows the **MVVM (Model-View-ViewModel)** architecture pattern, enhanced by the **Provider** package for state management. This structure promotes a clear separation of concerns:
@@ -91,7 +90,6 @@ This architecture enables reactive programming, allowing the UI to automatically
 - SharedPreferences for local storage
 - flutter_tts for text-to-speech
 - url_launcher for opening web links
-- Firebase Authentication for user authentication
 
 ## 📦 Dependencies
 - flutter_tts: Text-to-Speech functionality
@@ -99,8 +97,6 @@ This architecture enables reactive programming, allowing the UI to automatically
 - shared_preferences: Local data persistence
 - url_launcher: Opening web URLs
 - http: Network requests
-- firebase_auth: Firebase Authentication
-- firebase_core: Firebase Core
 
 ## 🚀 Getting Started
 
@@ -134,7 +130,6 @@ flutter run
 ## 🔧 Configuration
 - Modify `lib/providers/news_provider.dart` to update API key
 - Adjust TTS settings in `lib/providers/tts_provider.dart`
-- Configure Firebase project and add necessary configurations in your Flutter app
 
 ## 🌈 App Screens
 1. Home Screen
