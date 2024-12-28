@@ -10,7 +10,7 @@
 .svn/
 migrate_working_dir/
 plan.txt
-comeon.txt
+
 # IntelliJ related
 *.iml
 *.ipr
