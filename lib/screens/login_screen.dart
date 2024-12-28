@@ -167,10 +167,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: double.infinity,
                                     height: 48,
                                     child: ElevatedButton(
-                                      onPressed: authProvider.isLoading
+                                      onPressed: authProvider.isGoogleLoading
+                                          ? null
+                                          : () async {
+                                              final success = await authProvider.signInWithGoogle();//wait for the signin process to complete using await
+                                              if (success && mounted) {
+                                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                                  '/',//navigate to home page 
+                                                  (route) => false,
+                                                );
+                                              }
+                                            },
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      ),
+                                      child: authProvider.isGoogleLoading
+                                          ? const SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          : const Text('Sign In with Google'),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 48,
+                                    child: ElevatedButton(
+                                      onPressed: authProvider.isEmailLoading
                                           ? null
                                           : _login,
-                                      child: authProvider.isLoading
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      ),
+                                      child: authProvider.isEmailLoading
                                           ? const SizedBox(
                                               width: 24,
                                               height: 24,

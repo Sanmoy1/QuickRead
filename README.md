@@ -46,6 +46,7 @@ The app uses Firebase Authentication to manage user accounts. Users can sign up 
 - **Sign Up**: New users can create an account by providing an email and password.
 - **Login**: Existing users can log in to their accounts.
 - **Logout**: Users can log out, which clears their authentication state.
+- **Google Sign-In**: Users can sign in using their Google account, which allows for a seamless login experience.
 
 ## 📸 Screenshots
 
