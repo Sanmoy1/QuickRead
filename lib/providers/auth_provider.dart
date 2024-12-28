@@ -1,11 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email'],
+    signInOption: SignInOption.standard,
+  );
   User? _user;
+  bool _isEmailLoading = false;
+  bool _isGoogleLoading = false;
+  bool _isSigningUp = false;
   String _error = '';
-  bool _isLoading = false;
 
   AuthProvider() {
     _auth.authStateChanges().listen((User? user) {
@@ -15,13 +22,15 @@ class AuthProvider with ChangeNotifier {
   }
 
   bool get isAuthenticated => _user != null;
+  bool get isEmailLoading => _isEmailLoading;
+  bool get isGoogleLoading => _isGoogleLoading;
+  bool get isSigningUp => _isSigningUp;//this is a public getter 
   String get error => _error;
-  bool get isLoading => _isLoading;
   User? get user => _user;
 
   Future<bool> signIn(String email, String password) async {
     try {
-      _isLoading = true;
+      _isEmailLoading = true;
       _error = '';
       notifyListeners();
 
@@ -30,11 +39,11 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _user = result.user;
-      _isLoading = false;
+      _isEmailLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      _isLoading = false;
+      _isEmailLoading = false;
       _error = _getReadableError(e);
       notifyListeners();
       return false;
@@ -43,7 +52,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> signUp(String email, String password) async {
     try {
-      _isLoading = true;
+      _isSigningUp = true;
       _error = '';
       notifyListeners();
 
@@ -52,11 +61,54 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _user = result.user;
-      _isLoading = false;
+      _isSigningUp = false;
       notifyListeners();
       return true;
     } catch (e) {
-      _isLoading = false;
+      _isSigningUp = false;
+      _error = _getReadableError(e);
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> signInWithGoogle() async {
+    try {
+      _isGoogleLoading = true;
+      _error = '';
+      notifyListeners();
+
+      // Sign out from any existing Google session
+      await _googleSignIn.signOut();
+
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      // If user cancels the sign-in flow
+      if (googleUser == null) {
+        _isGoogleLoading = false;
+        _error = 'Google sign in was cancelled';
+        notifyListeners();
+        return false;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final UserCredential result = await _auth.signInWithCredential(credential);
+      _user = result.user;
+      _isGoogleLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _isGoogleLoading = false;
       _error = _getReadableError(e);
       notifyListeners();
       return false;
@@ -65,16 +117,19 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signOut() async {
     try {
-      _isLoading = true;
+      _isEmailLoading = false;
+      _isGoogleLoading = false;
+      _isSigningUp = false;
       _error = '';
       notifyListeners();
 
+      // Sign out from Google
+      await _googleSignIn.signOut();
+      // Sign out from Firebase
       await _auth.signOut();
       _user = null;
-      _isLoading = false;
       notifyListeners();
     } catch (e) {
-      _isLoading = false;
       _error = _getReadableError(e);
       notifyListeners();
       rethrow;
@@ -98,10 +153,14 @@ class AuthProvider with ChangeNotifier {
           return 'Operation not allowed';
         case 'user-disabled':
           return 'User has been disabled';
+        case 'account-exists-with-different-credential':
+          return 'An account already exists with the same email address but different sign-in credentials';
+        case 'invalid-credential':
+          return 'The credential is malformed or has expired';
         default:
           return 'Authentication error: ${error.message}';
       }
     }
-    return 'An error occurred: $error';
+    return error.toString();
   }
 }

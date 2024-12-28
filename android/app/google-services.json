@@ -12,7 +12,20 @@
           "package_name": "com.example.news_reader_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "634244315295-g091j8crduqqppgpi2rf1lg92dtesp8h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.news_reader_app",
+            "certificate_hash": "51f877bd40222b870cdd3f7913f02addf8698000"
+          }
+        },
+        {
+          "client_id": "634244315295-3eunk2lai8p3feb5j8bt26i3gck6qkis.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCAfQk6raOs_tD5SW7kX_mYyXZV-VP0QP8"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634244315295-3eunk2lai8p3feb5j8bt26i3gck6qkis.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

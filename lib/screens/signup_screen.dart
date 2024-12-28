@@ -187,10 +187,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                     width: double.infinity,
                                     height: 48,
                                     child: ElevatedButton(
-                                      onPressed: authProvider.isLoading
+                                      onPressed: authProvider.isSigningUp
                                           ? null
                                           : _signup,
-                                      child: authProvider.isLoading
+                                          style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                              ),
+                                      child: authProvider.isSigningUp
                                           ? const SizedBox(
                                               width: 24,
                                               height: 24,
