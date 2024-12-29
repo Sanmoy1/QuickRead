@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/article.dart';
 import '../models/search_filters.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class NewsService {
+  // final String? _apiKey = dotenv.env['API_KEY'];
   static const String _baseUrl = 'https://newsapi.org/v2';
   static const String _apiKey = 'a40dc07fb2454b9dbff186b5124169d5'; 
 

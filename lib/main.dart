@@ -9,11 +9,13 @@ import 'providers/auth_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/bookmarks_screen.dart';
 import 'screens/login_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/signup_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // await dotenv.load();// import .env
   runApp(const MyApp());
 }
 
